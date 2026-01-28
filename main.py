@@ -93,14 +93,15 @@ wpi = {
 
 
 # 2. Define Construction Costs
-construction_costs = {
-    "initial_cost_of_construction_rs": 12843979.44,
-    "cost_of_initial_carbon_emissions_in_rs": 2065434.91,
-    "cost_of_super_structure": 9356038.92
+life_cycle_construction_cost_breakdown = {
+    "initial_construction_cost_rs": 12843979.44,
+    "material_carbon_emissions_cost_rs": 2065434.91,
+    "superstructure_construction_cost_rs": 9356038.92,
+    "total_scrap_value_rs": 2164095.02
 }
 
 # 3. Single point of execution
-results = run_full_lcc_analysis(Input, wpi, construction_costs, debug=True)
+results = run_full_lcc_analysis(Input, wpi, life_cycle_construction_cost_breakdown, debug=True)
 
 print("--- LCC Analysis Complete ---")
 print(json.dumps(results, indent=2))

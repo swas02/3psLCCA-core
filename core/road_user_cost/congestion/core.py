@@ -1,8 +1,6 @@
 from . import formulas as cf
 from ... import standard_keys as c
 from .get_total_volume import calculate_total_pcu
-import os
-import json
 from ...utils.dump_to_file import dump_to_file
 
 
@@ -148,7 +146,7 @@ def calculate_total_adjusted_costs(a, Traffic_Input, debug=False):
     }
 
     if debug:
-        dump_to_file("voc-4-Post_congestion_VOC.json",
+        dump_to_file("ruc-congestion-voc-4-Post_congestion_VOC.json",
                      {"summary": result, "temporal_steps": temporal_breakdown})
 
     return result

@@ -1,7 +1,6 @@
-import os
-import json
 from datetime import datetime
 from .input_validation import validate_vehicle_data
+from ...utils.dump_to_file import dump_to_file
 
 def calculate_total_carbon_emission(vehicle_data: dict, debug: bool = False) -> dict[str, float | str]:
     """
@@ -55,18 +54,12 @@ def calculate_total_carbon_emission(vehicle_data: dict, debug: bool = False) -> 
         }
 
     if debug:
-        os.makedirs("debug", exist_ok=True)
-
         debug_output = {
-            "timestamp": datetime.now().isoformat(),
             "unit": "kgCO2e_per_km (per day of traffic)",
             "total_emission_kgCO2e_per_km": total_emission,
             "vehicle_breakdown": breakdown
         }
-
-        debug_file = os.path.join("debug", "traffic_carbon_emission_breakdown.json")
-        with open(debug_file, "w", encoding="utf-8") as f:
-            json.dump(debug_output, f, indent=4)
+        dump_to_file("ruc-carbon_emission_due_to_vehicles_breakdown.json", debug_output)
 
     return {
         "total_emission_kgCO2e_per_km": total_emission,

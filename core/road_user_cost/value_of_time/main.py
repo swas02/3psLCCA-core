@@ -1,5 +1,3 @@
-import os
-import json
 from . import IRCSP302019Table6_Table7 as IRC
 from .input_validation import validate_traffic_input, validate_wpi
 from ...utils.dump_to_file import dump_to_file

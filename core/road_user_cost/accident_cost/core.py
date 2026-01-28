@@ -1,5 +1,3 @@
-import os
-import json
 from .IRCSP302019Table8_Table9 import (
     table8_Economic_Cost_for_Different_Type_of_Accidents,
     table9_Economic_Cost_of_Quantum_of_Vehicle_Damage_due_to_Accidents
@@ -97,7 +95,7 @@ def accident_cost(traffic_input, wpi, debug=False):
     }
 
     if debug:
-        dump_to_file("accident_cost_summary.json", {
+        dump_to_file("ruc-accident_cost_summary.json", {
             "summary": result,
             "human_breakdown": human_breakdown,
             "damage_breakdown": damage_breakdown

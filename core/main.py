@@ -1,5 +1,3 @@
-import json
-import os
 from .road_user_cost.main import calculate_road_user_costs
 from .stage_cost.stage_cost import StageCostCalculator
 from .utils.dump_to_file import dump_to_file
@@ -33,14 +31,10 @@ def run_full_lcc_analysis(input_data, wpi, construction_costs, debug=False):
     # 5. Initialize and Run LCC Analysis
     stage_calc = StageCostCalculator(stage_params, construction_costs, debug)
 
-    # Execute calculations
-    use_stage_results = stage_calc.use_stage_cost_calculator()
-    reconstruction_results = stage_calc.reconstruction()
-    eol_results = stage_calc.end_of_life_stage_costs()
 
     return {
-        # "road_user_cost_summary": ruc_results,
-        "use_stage": use_stage_results,
-        "reconstruction": reconstruction_results,
-        "end_of_life": eol_results
+        "initial_stage": stage_calc.initial_cost_calculator(),
+        "use_stage": stage_calc.use_stage_cost_calculator(),
+        "reconstruction": stage_calc.reconstruction(),
+        "end_of_life": stage_calc.end_of_life_stage_costs()
     }

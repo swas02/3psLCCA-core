@@ -1,5 +1,3 @@
-import json
-import os
 from ... import standard_keys as c
 from ...utils.dump_to_file import dump_to_file
 
@@ -104,6 +102,6 @@ def calculate_total_pcu(vehicle_data, debug=True):
 
     if debug:
  
-        dump_to_file("volume-capacity-summary", debug_data)
+        dump_to_file("ruc-congestion-volume-capacity-summary", debug_data)
         
     return result

@@ -1,7 +1,5 @@
 from ..utils import IRCSP302019TableC1 as tableC1
 from ..utils.constants import vehicle_type_list, petrolToDieselRatio
-import json
-import os
 from typing import Any, Dict, Optional, Union
 from .... import standard_keys as c
 from ....utils.dump_to_file import dump_to_file
@@ -302,9 +300,8 @@ def post_process(outputFromVocOutputBuilder: Dict[str, Any], wpi: Dict[str, Any]
     summaryOfVOC = calculate_total_cost(wpiAdjustedValues)
 
     if debug:
-        os.makedirs("debug", exist_ok=True)
-        dump_to_file("voc-1-VOC_values_calculated_as_per_IRC_SP_30.json", outputFromVocOutputBuilder)
-        dump_to_file("voc-2-VOC_values_adjusted_according_to_WPI.json", wpiAdjustedValues)
-        dump_to_file("voc-3_VOC_summary.json", summaryOfVOC)
+        dump_to_file("ruc-voc-1-VOC_values_calculated_as_per_IRC_SP_30.json", outputFromVocOutputBuilder)
+        dump_to_file("ruc-voc-2-VOC_values_adjusted_according_to_WPI.json", wpiAdjustedValues)
+        dump_to_file("ruc-voc-3_VOC_summary.json", summaryOfVOC)
         
     return summaryOfVOC
