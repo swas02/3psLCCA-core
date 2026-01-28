@@ -3,6 +3,7 @@
 Input_old.py
 /stage_cost/main.py
 /debug
+*.md
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
