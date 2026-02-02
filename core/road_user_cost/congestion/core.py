@@ -57,22 +57,31 @@ def calculate_total_adjusted_costs(a, Traffic_Input, debug=False):
     # Peak Hours: Always use calculated V/C
     for i, hourly_percent in enumerate(hourly_dist):
         hourly_pcu_vol = total_daily_pcu * hourly_percent
-        vc = hourly_pcu_vol / h_capacity
+
+        vc_cal = hourly_pcu_vol / h_capacity
+        vc_considered = min(vc_cal, 1.0)
+
         states.append({
             "id": f"Peak_Hour_{i+1}",
-            "vc": vc,
+            "vc_cal": vc_cal,
+            "vc_considered": vc_considered,
             "share": hourly_percent,
             "is_peak": True
         })
+
 
     # Off-Peak Period
     if off_peak_duration > 0:
         off_peak_hourly_pcu = (
             total_daily_pcu * off_peak_share_total) / off_peak_duration
-        vc_off = off_peak_hourly_pcu / h_capacity
+
+        vc_cal = off_peak_hourly_pcu / h_capacity
+        vc_considered = min(vc_cal, 1.0)
+
         states.append({
             "id": "Off_Peak_Period",
-            "vc": vc_off,
+            "vc_cal": vc_cal,
+            "vc_considered": vc_considered,
             "share": off_peak_share_total,
             "is_peak": False
         })
@@ -91,12 +100,13 @@ def calculate_total_adjusted_costs(a, Traffic_Input, debug=False):
             t_factors = {v: 1.0 for v in input_vehicles + ["buses"]}
         else:
             d_factors = cf.distance_congestion_factors(
-                lane_type, vc=state["vc"])
-            t_factors = cf.time_congestion_factors(lane_type, vc=state["vc"])
+                lane_type, vc=state["vc_considered"])
+            t_factors = cf.time_congestion_factors(lane_type, vc=state["vc_considered"])
 
         state_result = {
             "state": state["id"],
-            "v_c_ratio": round(state["vc"], 4),
+            "v_c_calculated": round(state["vc_cal"], 4),
+            "v_c_considered": round(state["vc_considered"], 4),
             "traffic_share": state["share"],
             "free_flow_applied": (not state["is_peak"] and force_free_flow),
             "vehicle_impacts": {}

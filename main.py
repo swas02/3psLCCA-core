@@ -1,9 +1,6 @@
 import json
-from Input import Input
+from Input_global import Input
 from core.main import run_full_lcc_analysis
-
-input_parameters = Input["maintenance_and_stage_parameters"]
-input_parameters["general"] = Input["general_parameters"]
 
 # 1. Define WPI (Standard multipliers)
 # (Keep the wpi dictionary exactly as you have it)
@@ -97,11 +94,13 @@ life_cycle_construction_cost_breakdown = {
     "initial_construction_cost_rs": 12843979.44,
     "material_carbon_emissions_cost_rs": 2065434.91,
     "superstructure_construction_cost_rs": 9356038.92,
-    "total_scrap_value_rs": 2164095.02
+    "total_scrap_value_rs": 2164095.02,
 }
 
 # 3. Single point of execution
-results = run_full_lcc_analysis(Input, wpi, life_cycle_construction_cost_breakdown, debug=True)
+results = run_full_lcc_analysis(
+    Input, wpi, life_cycle_construction_cost_breakdown, debug=True
+)
 
 print("--- LCC Analysis Complete ---")
 print(json.dumps(results, indent=2))

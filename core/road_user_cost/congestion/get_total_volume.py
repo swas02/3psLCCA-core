@@ -102,6 +102,6 @@ def calculate_total_pcu(vehicle_data, debug=True):
 
     if debug:
  
-        dump_to_file("ruc-congestion-volume-capacity-summary", debug_data)
+        dump_to_file("ruc-congestion-volume-capacity-summary.json", debug_data)
         
     return result

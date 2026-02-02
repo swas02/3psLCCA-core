@@ -7,30 +7,41 @@ def run_full_lcc_analysis(input_data, wpi, construction_costs, debug=False):
     """
     Entry point for the OSDAG LCC module. 
     Coordinates RUC calculations and Life Cycle Stage Costing.
+    
+    If 'bypass_road_user_calculations' is True in general_parameters,
+    the function will use 'road_user_cost' from input_data instead of
+    calculating it.
     """
 
-    # 1. Execute Road User Cost Calculations
-    ruc_results = calculate_road_user_costs(
-        input_data["traffic_and_road_data"], wpi, debug)
+    # Execute Road User Cost Calculations or Bypass
+    bypass_ruc = input_data.get("general_parameters", {}).get("bypass_road_user_calculations", False)
 
-    # 2. Setup Stage Cost Parameters
-    stage_params = input_data["maintenance_and_stage_parameters"].copy()
-    stage_params["general"] = input_data["general_parameters"]
+    if bypass_ruc:
+        # Use provided RUC from input_data
+        ruc_results = input_data["daily_road_user_cost_with_vehicular_emissions"]
+        if debug:
+            print("Bypassing RUC calculation. Using provided road_user_cost:", ruc_results)
+    else:
+        # Calculate RUC normally
+        ruc_results = calculate_road_user_costs(input_data.get("traffic_and_road_data", {}), wpi, debug)
+        # print(ruc_results)
 
-    # Inject the distance into general params so the calculator/modifier can find it
-    stage_params["general"]["additional_rerouting_distance_km"] = input_data["traffic_and_road_data"].get(
-        "additional_inputs").get("additional_reroute_distance_km")
+    # Setup Stage Cost Parameters
+    stage_params = input_data.get("maintenance_and_stage_parameters", {}).copy()
+    stage_params["general"] = input_data.get("general_parameters", {})
 
-    # 4. Combine initial asset costs with formatted RUC results
-    construction_costs["road_user_cost"] = ruc_results
+
+    # Combine initial asset costs with RUC results
+    construction_costs["daily_road_user_cost_with_vehicular_emissions"] = ruc_results
 
     if debug:
-        dump_to_file("Stage_Cost_Calculator_Inputs.json", {"stage_params": stage_params,
-                                                           "construction_costs": construction_costs})
+        dump_to_file(
+            "Stage_Cost_Calculator_Inputs.json",
+            {"stage_params": stage_params, "construction_costs": construction_costs}
+        )
 
-    # 5. Initialize and Run LCC Analysis
+    # Initialize and Run LCC Analysis
     stage_calc = StageCostCalculator(stage_params, construction_costs, debug)
-
 
     return {
         "initial_stage": stage_calc.initial_cost_calculator(),

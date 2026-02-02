@@ -17,7 +17,9 @@ def calculate_total_cost(data: Dict[str, Any]) -> Dict[str, Any]:
         if cost_type not in data:
             continue
 
-        total_cost[cost_type] = {"total": {c.IT: 0.0, c.ET: 0.0}}
+        # total_cost[cost_type] = {"total": {c.IT: 0.0, c.ET: 0.0}}
+        total_cost[cost_type] = {}
+
 
         for vehicle_type, components in data[cost_type].items():
             if vehicle_type == "total":
@@ -31,19 +33,19 @@ def calculate_total_cost(data: Dict[str, Any]) -> Dict[str, Any]:
 
                 if isinstance(comp_values, dict):
                     if comp_values.get('iHTC', False):
-                        total_cost[cost_type]["total"][c.IT] += comp_values.get(c.IT)
-                        total_cost[cost_type]["total"][c.ET] += comp_values.get(c.ET)
+                        # total_cost[cost_type]["total"][c.IT] += comp_values.get(c.IT)
+                        # total_cost[cost_type]["total"][c.ET] += comp_values.get(c.ET)
                         total_cost[cost_type][vehicle_type][c.IT] += comp_values.get(c.IT)
                         total_cost[cost_type][vehicle_type][c.ET] += comp_values.get(c.ET)
                     else:
                         value = comp_values.get(c.VALUE)
-                        total_cost[cost_type]["total"][c.IT] += value
-                        total_cost[cost_type]["total"][c.ET] += value
+                        # total_cost[cost_type]["total"][c.IT] += value
+                        # total_cost[cost_type]["total"][c.ET] += value
                         total_cost[cost_type][vehicle_type][c.IT] += value
                         total_cost[cost_type][vehicle_type][c.ET] += value
                 elif isinstance(comp_values, (int, float)):
-                    total_cost[cost_type]["total"][c.IT] += comp_values
-                    total_cost[cost_type]["total"][c.ET] += comp_values
+                    # total_cost[cost_type]["total"][c.IT] += comp_values
+                    # total_cost[cost_type]["total"][c.ET] += comp_values
                     total_cost[cost_type][vehicle_type][c.IT] += comp_values
                     total_cost[cost_type][vehicle_type][c.ET] += comp_values
                 else:

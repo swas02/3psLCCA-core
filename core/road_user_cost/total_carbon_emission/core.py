@@ -1,24 +1,25 @@
-from datetime import datetime
 from .input_validation import validate_vehicle_data
 from ...utils.dump_to_file import dump_to_file
 
-def calculate_total_carbon_emission(vehicle_data: dict, debug: bool = False) -> dict[str, float | str]:
+def calculate_total_carbon_emission(vehicle_data: dict, distance_per_day_km: float, debug: bool = False) -> dict[str, float | str]:
     """
-    Calculate total carbon emissions (kgCO2e per km) for all vehicles.
+    Calculate total carbon emissions (kgCO2e) for all vehicles over a given distance per day.
 
-    Total = sum(vehicles_per_day * carbon_emissions_kgCO2e_per_km)
+    Total = sum(vehicles_per_day * carbon_emissions_kgCO2e_per_km * distance_per_day_km)
 
     Parameters
     ----------
     vehicle_data : dict
         traffic_input["vehicle_data"]
+    distance_per_day_km : float
+        Average distance traveled per day per vehicle in kilometers (default 1 km)
     debug : bool
         If True, saves a detailed emission breakdown JSON in ./debug/
 
     Returns
     -------
-    float
-        Total carbon emissions in kgCO2e per km (per day of traffic)
+    dict
+        Total carbon emissions in kgCO2e for the given distance per day
 
     Raises
     ------
@@ -40,7 +41,7 @@ def calculate_total_carbon_emission(vehicle_data: dict, debug: bool = False) -> 
         emission_factor = data.get("carbon_emissions_kgCO2e_per_km")
 
         try:
-            vehicle_total = float(count) * float(emission_factor)
+            vehicle_total = float(count) * float(emission_factor) * float(distance_per_day_km)
         except (ValueError, TypeError):
             print(f"Warning: Skipping {vehicle_type}, invalid numeric values.")
             continue
@@ -50,21 +51,23 @@ def calculate_total_carbon_emission(vehicle_data: dict, debug: bool = False) -> 
         breakdown[vehicle_type] = {
             "vehicles_per_day": count,
             "emission_factor_kgCO2e_per_km": emission_factor,
-            "total_emission_kgCO2e_per_km": vehicle_total
+            "distance_traveled_km": distance_per_day_km,
+            "total_emission_kgCO2e": vehicle_total
         }
 
     if debug:
         debug_output = {
-            "unit": "kgCO2e_per_km (per day of traffic)",
-            "total_emission_kgCO2e_per_km": total_emission,
+            "unit": "kgCO2e (total per day for the given distance)",
+            "distance_per_day_km": distance_per_day_km,
+            "total_emission_kgCO2e": total_emission,
             "vehicle_breakdown": breakdown
         }
         dump_to_file("ruc-carbon_emission_due_to_vehicles_breakdown.json", debug_output)
 
     return {
-        "total_emission_kgCO2e_per_km": total_emission,
-        "unit": "kgCO2e/km/day",
-        "Note": "This value represents the total carbon emissions per kilometer per day. "
-        "To get the total emissions for a specific period or distance, multiply this value "
-        "by the number of days and the total distance traveled (in km)."
+        "total_emission_kgCO2e": total_emission,
+        "unit": "kgCO2e/day",
+        "distance_per_day_km": distance_per_day_km,
+        "Note": "This value represents the total carbon emissions per day for the given distance traveled. "
+        "To get total emissions over multiple days or different distances, multiply accordingly."
     }

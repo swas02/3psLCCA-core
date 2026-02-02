@@ -1,6 +1,4 @@
 from typing import Dict, Any, Optional
-from .utils.present_worth_factor import sum_of_present_worth_factor as spwi
-from .utils.road_user_cost_modifier import road_user_cost_modifier
 from .utils.present_worth_factor import sum_of_present_worth_factor, demolition_spwi
 from ..utils.dump_to_file import dump_to_file
 spwi = sum_of_present_worth_factor
@@ -28,11 +26,11 @@ class StageCostCalculator:
         self.cost_of_super_structure = program_inputs["superstructure_construction_cost_rs"]
         self.total_scrap_cost = program_inputs["total_scrap_value_rs"]
         # Road user cost inputs
-        self.road_user_cost = program_inputs.get("road_user_cost", {})
-        self.additional_rerouting_distance_km = general.get(
-            "additional_rerouting_distance_km")
+        self.daily_road_user_cost_with_vehicular_emissions = program_inputs.get("daily_road_user_cost_with_vehicular_emissions")
         self.days_per_month = general.get("days_per_month")
         self.construction_period_in_yrs = general["construction_period_months"] / 12
+        
+        
 
     # ██████╗ ██████╗ ███████╗███████╗███████╗███╗   ██╗████████╗    ██╗    ██╗ ██████╗ ██████╗ ████████╗██╗  ██╗    ███████╗ █████╗  ██████╗████████╗ ██████╗ ██████╗
     # ██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝████╗  ██║╚══██╔══╝    ██║    ██║██╔═══██╗██╔══██╗╚══██╔══╝██║  ██║    ██╔════╝██╔══██╗██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗
@@ -81,24 +79,58 @@ class StageCostCalculator:
     # ██║  ██║╚██████╔╝██║  ██║██████╔╝    ╚██████╔╝███████║███████╗██║  ██║    ╚██████╗╚██████╔╝███████║   ██║
     # ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝      ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝     ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝
 
+
     def _road_user_cost_and_carbon_emissions_cost(
         self,
         duration_days: Optional[int] = None,
         spwf: Optional[float] = None,
     ) -> Dict[str, Any]:
         """
-        Proxy method for backward compatibility.
-        Calls the standalone `road_user_cost_calculator_per_km_days` function.
+        Computes total Road User Cost (RUC) and Carbon Emission cost.
+        Uses `total_daily_ruc` from self.daily_road_user_cost_with_vehicular_emissions to avoid recalculation.
         """
 
-        return road_user_cost_modifier(
-            road_user_cost=self.road_user_cost,
-            additional_rerouting_distance_km=self.additional_rerouting_distance_km,
-            input_params=self.input_params,
-            duration_days=duration_days,
-            spwf=spwf,
-            debug=self.debug,
-        )
+
+        # Extract daily total RUC
+        try:
+            daily_ruc = self.daily_road_user_cost_with_vehicular_emissions["total_daily_ruc"] # type: ignore
+            emission_kg_per_km = self.daily_road_user_cost_with_vehicular_emissions["total_carbon_emission"]["total_emission_kgCO2e"] # type: ignore
+        except KeyError as exc:
+            raise ValueError(f"Missing required road user cost data key: {exc}") from exc
+
+
+        # Total RUC for project duration
+        total_ruc = daily_ruc * duration_days
+
+        # Carbon cost
+        try:
+            scc = self.input_params["general"]["social_cost_of_carbon_per_mtco2e"]
+            conv_rate = self.input_params["general"]["currency_conversion"]
+        except KeyError as exc:
+            raise ValueError(f"Missing required input parameter: {exc}") from exc
+
+        total_emission_cost = emission_kg_per_km * duration_days * scc * conv_rate / 1000  # kg -> mt
+
+        # Apply Present Worth Factor (SPWF) if given
+        if spwf is not None:
+            total_ruc *= spwf
+            total_emission_cost *= spwf
+
+        # Construct debug info
+        debug_info = {
+            "daily_ruc": round(daily_ruc, 2),
+            "duration_days": duration_days,
+            "spwf_applied": spwf
+        } if getattr(self, "debug", False) else {}
+
+        # Return results
+        return {
+            "ruc_cost": round(total_ruc, 2),
+            "vehicular_emission_cost": round(total_emission_cost, 2),
+            "combined_social_cost": round(total_ruc + total_emission_cost, 2),
+            "debug": debug_info
+        }
+
 
     # ████████╗██╗███╗   ███╗███████╗     ██████╗ ██████╗ ███████╗████████╗    ██╗      ██████╗  █████╗ ███╗   ██╗
     # ╚══██╔══╝██║████╗ ████║██╔════╝    ██╔════╝██╔═══██╗██╔════╝╚══██╔══╝    ██║     ██╔═══██╗██╔══██╗████╗  ██║
