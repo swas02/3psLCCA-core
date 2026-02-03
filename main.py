@@ -1,5 +1,5 @@
 import json
-from Input_global import Input
+from Input import Input
 from core.main import run_full_lcc_analysis
 
 # 1. Define WPI (Standard multipliers)
