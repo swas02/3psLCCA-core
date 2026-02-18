@@ -9,7 +9,7 @@ Vehicle = c.HCV
 
 
 def compute_voc(vehicle_input: VehicleInput) -> Dict[str, Any]:
-    vt, W, RG, FL, RS, lane, RF = extract_vehicle_inputs(vehicle_input)
+    vt, W, RG, FL, RS, i_lane, lane, RF = extract_vehicle_inputs(vehicle_input)
     NP: Dict[str, int] = IRCSP302019TableC1.vehicle_costs[Vehicle]
 
     pwr = vehicle_input["power_weight_ratio_pwr"]
@@ -102,7 +102,7 @@ def compute_voc(vehicle_input: VehicleInput) -> Dict[str, Any]:
         # BUILD FINAL OUTPUT
         # -----------------------------
         return build_voc_output(
-            vt=vt, lane=lane,
+            vt=vt, i_lane=i_lane, lane=lane,
             velocity=V,
             petrol=petrol, diesel=diesel,
             SP_ET=SP_ET, SP_IT=SP_IT,

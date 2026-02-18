@@ -35,9 +35,7 @@ def run_full_lcc_analysis(input_data, construction_costs, wpi=None, debug=False)
         raise ValueError(
             f"Input validation failed with errors:\n{validation_report['errors']}"
         )
-
-    if debug and validation_report["warnings"]:
-        print("Validation warnings:", validation_report["warnings"])
+        
 
     # --- 3. Determine if RUC calculation is bypassed ---
     bypass_ruc = input_data.get("general_parameters", {}).get(
@@ -72,6 +70,8 @@ def run_full_lcc_analysis(input_data, construction_costs, wpi=None, debug=False)
             "Stage_Cost_Calculator_Inputs.json",
             {"stage_params": stage_params, "construction_costs": construction_costs},
         )
+        
+        dump_to_file("A0_Validation_report.json", validation_report)
 
     # --- 5. Initialize and Run LCC Calculations ---
     stage_calc = StageCostCalculator(stage_params, construction_costs, debug)
@@ -81,4 +81,6 @@ def run_full_lcc_analysis(input_data, construction_costs, wpi=None, debug=False)
         "use_stage": stage_calc.use_stage_cost_calculator(),
         "reconstruction": stage_calc.reconstruction(),
         "end_of_life": stage_calc.end_of_life_stage_costs(),
+        "warnings": validation_report["warnings"],
+        "notes": validation_report["info"]
     }

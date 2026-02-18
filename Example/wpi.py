@@ -1,10 +1,3 @@
-import json
-from Input import Input
-from Input_global import Input_global
-from core.main import run_full_lcc_analysis, get_IRC_standard_suggestions
-
-# 1. Define WPI (Standard multipliers)
-# (Keep the wpi dictionary exactly as you have it)
 wpi = {
     "year": 2024,
     "WPI": {
@@ -88,27 +81,3 @@ wpi = {
         },
     },
 }
-
-
-# 2. Define Construction Costs
-life_cycle_construction_cost_breakdown = {
-    "initial_construction_cost_rs": 12843979.44,
-    "material_carbon_emissions_cost_rs": 2065434.91,
-    "superstructure_construction_cost_rs": 9356038.92,
-    "total_scrap_value_rs": 2164095.02,
-}
-
-# 3. Single point of execution
-results = run_full_lcc_analysis(
-    Input, life_cycle_construction_cost_breakdown, wpi=wpi, debug=True
-)
-
-# results = run_full_lcc_analysis(
-#     Input_global, life_cycle_construction_cost_breakdown, debug=True
-# )
-
-
-print("--- LCC Analysis Complete ---")
-print(json.dumps(results, indent=2))
-
-# print(get_IRC_standard_suggestions())

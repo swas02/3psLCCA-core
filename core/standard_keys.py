@@ -15,14 +15,28 @@ FATAL = "fatal"
 MAJOR = "major"
 MINOR = "minor"
 
-# Type of Lane
-SL = "SL"
-IL = "IL"
-L2 = "2L"
-L4 = "4L"
-L6 = "6L"
-L8 = "8L"
-EW = "EW"
+# ==========================================================
+# Carriageway Type Codes
+# ==========================================================
+
+# --- Basic Carriageways ---
+SL = "SL"        # Single Lane
+IL = "IL"        # Intermediate Lane
+L2 = "2L"        # Two Lane (Two Way)
+L4 = "4L"        # Four Lane (Two Way)
+L6 = "6L"        # Six Lane (Two Way)
+L8 = "8L"        # Eight Lane (Two Way)
+
+# --- One Way Configurations ---
+L2_1W = "2L_1W"  # Two Lane (One Way)
+L3_1W = "3L_1W"  # Three Lane (One Way)
+
+# --- Expressways ---
+EW = "EW"        # Generic Expressway (legacy support)
+EW4 = "EW4"      # 4 Lane Expressway
+EW6 = "EW6"      # 6 Lane Expressway
+EW8 = "EW8"      # 8 Lane Expressway
+
 
 # VOC Components
 PETROL = "petrol"

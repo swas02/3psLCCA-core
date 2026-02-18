@@ -46,7 +46,7 @@ def get_IRC_standard_suggestions():
     return {
         "road_geometry": {
             # Returns list of dicts with 'code', 'name', and 'width' [cite: 67, 68]
-            "lane_types": CarriagewayStandards.list_types_with_names(),
+            "lane_types": CarriagewayStandards.get_suggestion(),
             "usage_note": CarriagewayStandards.NOTE,
         },
         "traffic": {

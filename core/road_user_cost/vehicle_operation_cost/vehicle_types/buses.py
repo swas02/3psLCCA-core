@@ -10,7 +10,7 @@ Vehicle = c.BUSES
 
 
 def compute_voc(vehicle_input: VehicleInput) -> Dict[str, Any]:
-    vt, W, RG, FL, RS, lane, RF = extract_vehicle_inputs(vehicle_input)
+    vt, W, RG, FL, RS, i_lane, lane, RF = extract_vehicle_inputs(vehicle_input)
     NP: Dict[str, int] = IRCSP302019TableC1.vehicle_costs[Vehicle]
 
     if vt == Vehicle:
@@ -86,7 +86,7 @@ def compute_voc(vehicle_input: VehicleInput) -> Dict[str, Any]:
             PT = 28385.28 / UPD
         else:
             PT = 0
-            
+
         # Crew cost
         crew: float = 3775.3 / UPD
 
@@ -97,7 +97,7 @@ def compute_voc(vehicle_input: VehicleInput) -> Dict[str, Any]:
         # BUILD FINAL OUTPUT
         # -----------------------------
         return build_voc_output(
-            vt=vt, lane=lane,
+            vt=vt, i_lane=i_lane, lane=lane,
             velocity=V,
             petrol=petrol, diesel=diesel,
             SP_ET=SP_ET, SP_IT=SP_IT,

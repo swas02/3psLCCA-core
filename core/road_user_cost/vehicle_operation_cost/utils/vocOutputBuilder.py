@@ -3,6 +3,7 @@ from .... import standard_keys as c
 
 def build_voc_output(
     vt: str,
+    i_lane: str,
     lane: str,
     velocity: float,
     petrol: float,
@@ -30,7 +31,8 @@ def build_voc_output(
     
     return {
         "vehicle_type": vt,
-        "lane_type": lane,
+        "lane_type": i_lane,
+        "mapped_lane_type": lane,
         "velocity": {
             c.VALUE: nn(velocity),
             c.UNIT: "kmph"

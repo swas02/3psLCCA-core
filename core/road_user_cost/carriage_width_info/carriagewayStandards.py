@@ -8,21 +8,92 @@ from ... import standard_keys as c
 class CarriagewayStandards:
     """
     Manages standard carriageway widths for different road types.
-
-    Methods:
-    - list_types(): Returns available carriageway types and usage note.
-    - get_width(type_name, custom_width=None): Retrieves width for a given type, with type checks.
     """
 
-    _STANDARD_WIDTHS: MappingProxyType = MappingProxyType({
-        c.SL: 3.75,
-        c.IL: 5.50,
-        c.L2: 7.00,
-        c.L4: 2 * 3.5,
-        c.L6: 3 * 3.5,
-        c.L8: 4 * 3.5,
-        c.EW: None,  # custom input required
-    })
+    # Single structured data source
+    _DATA = MappingProxyType(
+        {
+            # --- Undivided / Standard Roads ---
+            c.SL: {
+                "code": c.SL,
+                "name": "Single Lane",
+                "width": 3.75,
+                "capacity": 435,
+                "velocity_class": c.SL,
+            },
+            c.IL: {
+                "code": c.IL,
+                "name": "Intermediate Lane",
+                "width": 5.50,
+                "capacity": 1158,
+                "velocity_class": c.IL,
+            },
+            c.L2: {
+                "code": c.L2,
+                "name": "Two Lane (Two Way)",
+                "width": 7.00,
+                "capacity": 2400,
+                "velocity_class": c.L2,
+            },
+            c.L2_1W: {
+                "code": c.L2_1W,
+                "name": "Two Lane (One Way)",
+                "width": 7.00,
+                "capacity": 2700,
+                "velocity_class": c.L4,
+            },
+            c.L3_1W: {
+                "code": c.L3_1W,
+                "name": "Three Lane (One Way)",
+                "width": 10.50,
+                "capacity": 4200,
+                "velocity_class": c.L6,
+            },
+            c.L4: {
+                "code": c.L4,
+                "name": "Four Lane (Two Way)",
+                "width": 7.00,
+                "capacity": 5400,
+                "velocity_class": c.L4,
+            },
+            c.L6: {
+                "code": c.L6,
+                "name": "Six Lane (Two Way)",
+                "width": 10.50,
+                "capacity": 8400,
+                "velocity_class": c.L6,
+            },
+            c.L8: {
+                "code": c.L8,
+                "name": "Eight Lane (Two Way)",
+                "width": 14.00,
+                "capacity": 13600,
+                "velocity_class": c.L8,
+            },
+            # --- Expressways (Custom Width Required) ---
+            c.EW4: {
+                "code": c.EW4,
+                "name": "4 Lane (Two Way) Expressway",
+                "width": None,
+                "capacity": 5000,
+                "velocity_class": c.EW,
+            },
+            c.EW6: {
+                "code": c.EW6,
+                "name": "6 Lane (Two Way) Expressway",
+                "width": None,
+                "capacity": 7500,
+                "velocity_class": c.EW,
+            },
+            c.EW8: {
+                "code": c.EW8,
+                "name": "8 Lane (Two Way) Expressway",
+                "width": None,
+                "capacity": 9200,
+                "velocity_class": c.EW,
+            },
+        }
+    )
 
     NOTE: str = (
         "Note: 'Expressway (custom width required)' requires user input. "
@@ -32,39 +103,36 @@ class CarriagewayStandards:
     @classmethod
     def list_types(cls) -> Tuple[List[str], str]:
         """
-        List all available carriageway types with a usage note.
-
         Returns:
-            tuple: (list of carriageway type names, usage note)
+            tuple: (list of carriageway type codes, usage note)
         """
-        return list(cls._STANDARD_WIDTHS.keys()), cls.NOTE
+        return list(cls._DATA.keys()), cls.NOTE
 
     @classmethod
-    def get_width(cls, type_name: str, custom_width: Optional[Union[int, float]] = None) -> Tuple[Optional[float], str]:
+    def get_width(
+        cls, type_name: str, custom_width: Optional[Union[int, float]] = None
+    ) -> Tuple[Optional[float], str]:
         """
-        Retrieve the width for a given carriageway type, with input type validation.
-
-        Args:
-            type_name (str): Name of the carriageway type.
-            custom_width (float or int, optional): Custom width for expressways.
-
-        Returns:
-            tuple: (width in meters or None, message string)
+        Retrieve the width for a given carriageway type.
         """
-        # Check type_name
+
+        # Validate type_name
         if not isinstance(type_name, str):
-            return None, f"Error: 'type_name' must be a string, got {type(type_name).__name__}."
+            return (
+                None,
+                f"Error: 'type_name' must be a string, got {type(type_name).__name__}.",
+            )
 
-        if type_name not in cls._STANDARD_WIDTHS:
+        if type_name not in cls._DATA:
             return None, f"Error: Unknown carriageway type '{type_name}'."
 
-        width = cls._STANDARD_WIDTHS[type_name]
+        width = cls._DATA[type_name]["width"]
 
-        # Standard width available
+        # Standard width
         if width is not None:
-            return width, "Standard width applied."
+            return width, "Standard width applied."  # type: ignore
 
-        # Custom width required (Expressway)
+        # Custom width required
         if custom_width is None:
             return None, (
                 "Custom width required for this type. "
@@ -72,36 +140,69 @@ class CarriagewayStandards:
                 "Carriageway width represents the total width of the roadway for vehicular traffic."
             )
 
-        # Validate custom_width type
         if not isinstance(custom_width, (int, float)):
-            return None, f"Error: 'custom_width' must be a number (int or float), got {type(custom_width).__name__}."
+            return None, (
+                f"Error: 'custom_width' must be a number (int or float), "
+                f"got {type(custom_width).__name__}."
+            )
 
-        # Validate positive width
         if custom_width <= 0:
             return None, "Error: 'custom_width' must be a positive number."
 
         return float(custom_width), "Custom expressway width applied."
 
     @classmethod
-    def list_types_with_names(cls) -> List[dict]:
+    def get_capacity(cls, type_name: str) -> int:
         """
-        List all available carriageway types with their full names and widths.
+        Retrieve the capacity for a given carriageway type.
+
+        Args:
+            type_name (str): Carriageway type code.
+
+        Returns:
+            int: Capacity of the carriageway type.
         """
-        # Base metadata with user-friendly names
-        types_metadata = [
-            {"code": c.SL, "name": "Single Lane"},
-            {"code": c.IL, "name": "Intermediate Lane"},
-            {"code": c.L2, "name": "Two Lane"},
-            {"code": c.L4, "name": "Four Lane"},
-            {"code": c.L6, "name": "Six Lane"},
-            {"code": c.L8, "name": "Eight Lane"},
-            {"code": c.EW, "name": "Expressway"},
-        ]
+        return cls._DATA[type_name]["capacity"] # type: ignore
 
-        # Dynamically inject widths from the standard mapping 
-        for item in types_metadata:
-            width = cls._STANDARD_WIDTHS.get(item["code"])
-            # If width is None, it requires custom user input 
-            item["width"] = width if width is not None else "custom_required"
+    @classmethod
+    def get_suggestion(cls) -> List[dict]:
+        """
+        Returns full information for all carriageway types.
 
-        return types_metadata
+        Returns:
+            List[dict]: Each dict contains:
+                - code
+                - name
+                - width (or 'custom_required' if None)
+                - capacity
+                - velocity_class
+        """
+        result = []
+
+        for item in cls._DATA.values():
+            result.append(
+                {
+                    "code": item["code"],
+                    "name": item["name"],
+                    "width": item["width"] if item["width"] is not None else "custom_required",
+                    "capacity": item.get("capacity", None),
+                    "velocity_class": item.get("velocity_class", None),
+                }
+            )
+
+        return result
+
+    @classmethod
+    def get_velocity_class(cls, type_name: str) -> str:
+        """
+        Retrieve the velocity class for a given carriageway type.
+        Assumes 'type_name' is already validated.
+
+        Args:
+            type_name (str): Carriageway type code (e.g., 'SL', 'L2', 'EW4')
+
+        Returns:
+            str: The velocity_class for the carriageway type
+        """
+
+        return cls._DATA[type_name]["velocity_class"]  # type: ignore

@@ -2,6 +2,7 @@ from . import formulas as cf
 from ... import standard_keys as c
 from .get_total_volume import calculate_total_pcu
 from ...utils.dump_to_file import dump_to_file
+from ..carriage_width_info.carriagewayStandards import CarriagewayStandards
 
 
 def validate_new(a, Traffic_Input, debug=False):
@@ -35,7 +36,8 @@ def calculate_total_adjusted_costs(a, Traffic_Input, debug=False):
     # 1. Extract Parameters
     hourly_dist = add_in.get(c.PEAK_HOURLY_DISTRIBUTION, [])
     h_capacity = add_in.get(c.HOURLY_CAPACITY)
-    lane_type = add_in.get("alternate_road_carriageway")
+    lane = add_in.get("alternate_road_carriageway")
+    lane_type = CarriagewayStandards.get_velocity_class(lane)
     # New Toggle
     force_free_flow = add_in.get(c.FORCE_FREE_FLOW_OFF_PEAK, False)
 
@@ -69,7 +71,6 @@ def calculate_total_adjusted_costs(a, Traffic_Input, debug=False):
             "is_peak": True
         })
 
-
     # Off-Peak Period
     if off_peak_duration > 0:
         off_peak_hourly_pcu = (
@@ -101,7 +102,8 @@ def calculate_total_adjusted_costs(a, Traffic_Input, debug=False):
         else:
             d_factors = cf.distance_congestion_factors(
                 lane_type, vc=state["vc_considered"])
-            t_factors = cf.time_congestion_factors(lane_type, vc=state["vc_considered"])
+            t_factors = cf.time_congestion_factors(
+                lane_type, vc=state["vc_considered"])
 
         state_result = {
             "state": state["id"],

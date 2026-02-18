@@ -9,14 +9,14 @@ Vehicle = c.MCV
 
 
 def compute_voc(vehicle_input: VehicleInput) -> Dict[str, Any]:
-    vt, W, RG, FL, RS, lane, RF = extract_vehicle_inputs(vehicle_input)
+    vt, W, RG, FL, RS, i_lane, lane, RF = extract_vehicle_inputs(vehicle_input)
     NP: Dict[str, int] = IRCSP302019TableC1.vehicle_costs[Vehicle]
 
     pwr = vehicle_input["power_weight_ratio_pwr"]
     if pwr == None:
         raise ValueError(
             "Power to weight ratio (pwr) must be provided for HCV vehicles.")
-    
+
     if vt == Vehicle:
         # -----------------------------
         # SPEED FORMULA
@@ -39,11 +39,14 @@ def compute_voc(vehicle_input: VehicleInput) -> Dict[str, Any]:
 
         # Fuel consumption
         petrol: float = 0
-        diesel: float = 90 + (14489.919 / V) + 0.0216 * (V ** 2) + 0.01 * RG + 8.217 * RS - 8.8272 * FL - 13.113 * (pwr)
+        diesel: float = 90 + (14489.919 / V) + 0.0216 * (V ** 2) + \
+            0.01 * RG + 8.217 * RS - 8.8272 * FL - 13.113 * (pwr)
 
         # Spare parts
-        SP_ET: float = math.exp(-9.492638 + 0.0001413 * RG + 3.493 / W) * NP[c.ET]
-        SP_IT: float = math.exp(-9.492638 + 0.0001413 * RG + 3.493 / W) * NP[c.IT]
+        SP_ET: float = math.exp(-9.492638 + 0.0001413 *
+                                RG + 3.493 / W) * NP[c.ET]
+        SP_IT: float = math.exp(-9.492638 + 0.0001413 *
+                                RG + 3.493 / W) * NP[c.IT]
 
         # Maintenance labour
         ML: float = 0.7912 * SP_ET
@@ -91,13 +94,14 @@ def compute_voc(vehicle_input: VehicleInput) -> Dict[str, Any]:
         elif lane in [c.L4, c.L6, c.L8, c.EW]:
             CHC = 1707.37 / UPD
         else:
-            raise ValueError(f"Invalid lane type '{lane}' for Multi Axle Heavy Commercial Vehicles (MCVs) vehicle.")
+            raise ValueError(
+                f"Invalid lane type '{lane}' for Multi Axle Heavy Commercial Vehicles (MCVs) vehicle.")
 
         # -----------------------------
         # BUILD FINAL OUTPUT
         # -----------------------------
         return build_voc_output(
-            vt=vt, lane=lane,
+            vt=vt, i_lane=i_lane, lane=lane,
             velocity=V,
             petrol=petrol, diesel=diesel,
             SP_ET=SP_ET, SP_IT=SP_IT,

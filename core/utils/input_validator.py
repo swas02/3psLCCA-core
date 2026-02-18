@@ -1,3 +1,5 @@
+from ..road_user_cost.carriage_width_info.carriagewayStandards import CarriagewayStandards
+
 def ironclad_validator(data, suggestions, wpi):
     """
     Complete Ironclad validator for OSDAG LCC inputs.
@@ -9,7 +11,7 @@ def ironclad_validator(data, suggestions, wpi):
     - Suggestion Sync (alternate_road_carriageway must be in approved list).
     - Domain rules (PWR for heavy vehicles, d_buses -> o_buses mapping).
     """
-    report = {"errors": [], "warnings": []}
+    report = {"errors": [], "warnings": [], "info": []}
 
     # --- 1. CONFIGURATION MANIFESTS ---
     GEN_MANIFEST = [
@@ -134,10 +136,21 @@ def ironclad_validator(data, suggestions, wpi):
             report["errors"].append(
                 f"Geometry Error: '{input_lane_code}' is not a valid alternate_road_carriageway. Expected one of {valid_lane_codes}."
             )
+                
 
         # B. Additional Numeric Field Validation
         for f in ADDITIONAL_FIELDS:
             check_num(add_in.get(f), f"additional_inputs -> {f}")
+                   
+        hourly_capacity = add_in.get("hourly_capacity")
+        std_capacity = CarriagewayStandards.get_capacity(input_lane_code)
+
+        if not isinstance(hourly_capacity, (int, float)) or hourly_capacity <= 0:
+            report["errors"].append("Provided 'hourly_capacity' must be a positive number.")
+        else:
+            # Compare with standard and add info if different
+            if hourly_capacity != std_capacity:
+                report["info"].append(f"User-provided hourly_capacity ({hourly_capacity}) differs from standard ({std_capacity}).")            
 
         # C. Severity Distribution Logic
         sev_total = sum(sev_dist.values()) if isinstance(sev_dist, dict) else 0
