@@ -77,3 +77,5 @@ coverage.xml
 
 # Environment / config files (optional, if sensitive)
 .env
+
+**/debug

@@ -1,3 +1,5 @@
+import json 
+from three_ps_lcca_core.inputs.wpi import WPIMetaData
 wpi = {
     "year": 2024,
     "WPI": {
@@ -81,3 +83,9 @@ wpi = {
         },
     },
 }
+
+# python -m three_ps_lcca_core.Example.wpi
+if __name__ == "__main__":
+    wpi_metadata = WPIMetaData.from_dict(wpi)
+    print(json.dumps(wpi_metadata.to_dict(), indent=4))
+    

@@ -14,12 +14,14 @@ If True   → daily_road_user_cost_with_vehicular_emissions must be provided
 """
 
 import json
-from core.main import run_full_lcc_analysis, get_IRC_standard_suggestions
+from three_ps_lcca_core import core as co
+from three_ps_lcca_core.core.main import run_full_lcc_analysis, get_IRC_standard_suggestions
+
 
 # Import user-defined structured inputs
-from Example.Input import Input
-from Example.Input_global import Input_global
-from Example.wpi import wpi
+from examples.from_metadata.Input import Input
+from examples.from_metadata.Input_global import Input_global
+from examples.from_metadata.wpi import wpi
 
 
 # ============================================================
@@ -46,7 +48,7 @@ def execute_analysis(input_data):
 
     try:
         results = run_full_lcc_analysis(
-            input_data, life_cycle_construction_cost_breakdown, wpi=wpi, debug=True
+            input_data, life_cycle_construction_cost_breakdown, wpi=wpi, debug=False
         )
 
         print("✔ LCC Analysis Completed Successfully.")
@@ -62,8 +64,12 @@ def execute_analysis(input_data):
 # 3️⃣ MAIN EXECUTION
 # ============================================================
 
+# python -m examples.from_metadata.example
 if __name__ == "__main__":
-
+# =======================================================================
+    # run file from project root with:
+    # python -m three_ps_lcca_core.examples.example
+# ======================================================================
     print("--------------------------------------------------")
     print("Running 3psLCCA Analysis")
     print("--------------------------------------------------")
