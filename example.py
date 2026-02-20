@@ -15,7 +15,6 @@ If True   → daily_road_user_cost_with_vehicular_emissions must be provided
 
 import json
 from core.main import run_full_lcc_analysis, get_IRC_standard_suggestions
-import core as co
 
 # Import user-defined structured inputs
 from Example.Input import Input
