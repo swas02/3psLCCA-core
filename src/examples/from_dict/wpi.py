@@ -2,7 +2,7 @@ import json
 from three_ps_lcca_core.inputs.wpi import WPIMetaData
 wpi = {
     "year": 2024,
-    "WPI": {
+    "wpi": {
         "fuelCost": {
             "petrol": 1.8067915690866512,
             "diesel": 1.7733050847457628,
