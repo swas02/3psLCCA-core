@@ -22,12 +22,12 @@ class StageCostCalculator:
         self.discount_rate = general["discount_rate_percent"]
         self.inflation_rate = general["inflation_rate_percent"]
 
-        self.initial_construction_cost = program_inputs["initial_construction_cost_rs"]
-        self.initial_carbon_cost = program_inputs["material_carbon_emissions_cost_rs"]
+        self.initial_construction_cost = program_inputs["initial_construction_cost"]
+        self.initial_carbon_cost = program_inputs["material_carbon_emissions_cost"]
         self.cost_of_super_structure = program_inputs[
-            "superstructure_construction_cost_rs"
+            "superstructure_construction_cost"
         ]
-        self.total_scrap_cost = program_inputs["total_scrap_value_rs"]
+        self.total_scrap_cost = program_inputs["total_scrap_value"]
         # Road user cost inputs
         self.daily_road_user_cost_with_vehicular_emissions = program_inputs.get(
             "daily_road_user_cost_with_vehicular_emissions"
@@ -165,21 +165,21 @@ class StageCostCalculator:
         if self.debug:
             breakdown = {
                 "formulae": {
-                    "time_cost_of_loan_rs": "initial_cost_of_construction_rs x interest_rate x time_for_construction_years x investment_ratio x sum_of_present_worth_factor",
+                    "time_cost_of_loan": "initial_cost_of_construction x interest_rate x time_for_construction_years x investment_ratio x sum_of_present_worth_factor",
                 },
                 "inputs": {
-                    "initial_cost_of_construction_rs": self.initial_construction_cost,
+                    "initial_cost_of_construction": self.initial_construction_cost,
                     "interest_rate": interest_rate,
                     "time_for_construction_years": time_for_construction_years,
                     "investment_ratio": investment_ratio,
                     "sum_of_present_worth_factor": spwi,
                 },
                 "computed_values": {
-                    "time_cost_of_loan_rs": time_cost_of_loan,
+                    "time_cost_of_loan": time_cost_of_loan,
                 },
             }
         return {
-            "total_time_cost_of_loan_rs": time_cost_of_loan,
+            "total_time_cost_of_loan": time_cost_of_loan,
             "breakdown": breakdown if self.debug else None,
         }
 
@@ -209,21 +209,21 @@ class StageCostCalculator:
         if self.debug:
             breakdown = {
                 "formulae": {
-                    "present_value_of_construction_costs_rs": "initial_cost_of_construction_rs x sum_of_present_worth_factor",
-                    "present_value_of_carbon_costs_rs": "cost_of_initial_carbon_emissions_in_rs x sum_of_present_worth_factor",
+                    "present_value_of_construction_costs": "initial_cost_of_construction x sum_of_present_worth_factor",
+                    "present_value_of_carbon_costs": "cost_of_initial_carbon_emissions_in x sum_of_present_worth_factor",
                 },
                 "inputs": {
-                    "initial_cost_of_construction_rs": self.initial_construction_cost,
-                    "cost_of_initial_carbon_emissions_in_rs": self.initial_carbon_cost,
+                    "initial_cost_of_construction": self.initial_construction_cost,
+                    "cost_of_initial_carbon_emissions_in": self.initial_carbon_cost,
                     "sum_of_present_worth_factor": spwi,
                 },
                 "computed_values": {
-                    "present_value_of_construction_costs_rs": initial_cost,
-                    "present_value_of_carbon_costs_rs": carbon_cost,
-                    "construction_road_user_cost_rs": construction_road_user_cost_data[
+                    "present_value_of_construction_costs": initial_cost,
+                    "present_value_of_carbon_costs": carbon_cost,
+                    "construction_road_user_cost": construction_road_user_cost_data[
                         "ruc_cost"
                     ],
-                    "construction_vehicular_emission_cost_rs": construction_road_user_cost_data[
+                    "construction_vehicular_emission_cost": construction_road_user_cost_data[
                         "vehicular_emission_cost"
                     ],
                     "construction_road_user_cost_breakdown": construction_road_user_cost_data[
@@ -235,8 +235,8 @@ class StageCostCalculator:
                 },
             }
         return {
-            "total_construction_costs_rs": initial_cost,
-            "total_carbon_costs_rs": carbon_cost,
+            "total_construction_costs": initial_cost,
+            "total_carbon_costs": carbon_cost,
             "construction_road_user_cost": construction_road_user_cost_data["ruc_cost"],
             "construction_vehicular_emission_cost": construction_road_user_cost_data[
                 "vehicular_emission_cost"
@@ -267,11 +267,11 @@ class StageCostCalculator:
         if self.debug:
             breakdown = {
                 "formulae": {
-                    "routine_inspection_cost_per_year": "initial_cost_of_construction_rs x percentage_of_initial_construction_cost_per_year / 100",
+                    "routine_inspection_cost_per_year": "initial_cost_of_construction x percentage_of_initial_construction_cost_per_year / 100",
                     "present_value_of_routine_inspection_costs": "routine_inspection_cost_per_year x present_worth_factor",
                 },
                 "inputs": {
-                    "initial_cost_of_construction_rs": self.initial_construction_cost,
+                    "initial_cost_of_construction": self.initial_construction_cost,
                     "percentage_of_initial_construction_cost_per_year": percentage,
                     "interval_in_years": interval,
                 },
@@ -280,7 +280,7 @@ class StageCostCalculator:
                     "sum_of_present_worth_factor": present_worth_factor,
                 },
                 "sum_of_present_worth_factor_breakdown": pwf["debug"],
-                "total_routine_inspection_costs_rs": total_cost,
+                "total_routine_inspection_costs": total_cost,
             }
 
         return {
@@ -323,14 +323,14 @@ class StageCostCalculator:
         if self.debug:
             breakdown = {
                 "formulae": {
-                    "routine_maintenance_cost_per_year": "initial_cost_of_construction_rs x percentage_of_initial_construction_cost_per_year / 100",
-                    "routine_carbon_cost_per_year": "cost_of_initial_carbon_emissions_in_rs x percentage_of_initial_cabron_emission_cost / 100",
+                    "routine_maintenance_cost_per_year": "initial_cost_of_construction x percentage_of_initial_construction_cost_per_year / 100",
+                    "routine_carbon_cost_per_year": "cost_of_initial_carbon_emissions_in x percentage_of_initial_cabron_emission_cost / 100",
                     "present_value_of_routine_maintenance_costs": "routine_maintenance_cost_per_year x present_worth_factor",
                     "present_value_of_routine_carbon_costs": "routine_carbon_cost_per_year x present_worth_factor",
                 },
                 "inputs": {
-                    "initial_cost_of_construction_rs": self.initial_construction_cost,
-                    "cost_of_initial_carbon_emissions_in_rs": self.initial_carbon_cost,
+                    "initial_cost_of_construction": self.initial_construction_cost,
+                    "cost_of_initial_carbon_emissions_in": self.initial_carbon_cost,
                     "percentage_of_initial_construction_cost_per_year": percentage,
                     "percentage_of_initial_cabron_emission_cost": carbon_percentage,
                     "interval_in_years": interval,
@@ -341,8 +341,8 @@ class StageCostCalculator:
                     "sum_of_present_worth_factor": spwf["value"],
                 },
                 "sum_of_present_worth_factor_breakdown": spwf["debug"],
-                "total_routine_maintenance_costs_rs": total_cost,
-                "total_routine_carbon_costs_rs": total_carbon_cost,
+                "total_routine_maintenance_costs": total_cost,
+                "total_routine_carbon_costs": total_carbon_cost,
             }
 
         return {
@@ -383,11 +383,11 @@ class StageCostCalculator:
         if self.debug:
             breakdown = {
                 "formulae": {
-                    "major_inspection_cost": "initial_cost_of_construction_rs x percentage_of_initial_construction_cost / 100",
+                    "major_inspection_cost": "initial_cost_of_construction x percentage_of_initial_construction_cost / 100",
                     "present_value_of_major_inspection_costs": "major_inspection_cost x present_worth_factor",
                 },
                 "inputs": {
-                    "initial_cost_of_construction_rs": self.initial_construction_cost,
+                    "initial_cost_of_construction": self.initial_construction_cost,
                     "percentage_of_initial_construction_cost_for_inspection": inspection_percentage,
                     "interval_for_repair_and_rehabitation_in_years_for_inspection": inspection_interval,
                 },
@@ -455,16 +455,16 @@ class StageCostCalculator:
         if self.debug:
             breakdown = {
                 "formulae": {
-                    "major_repair_cost": "initial_cost_of_construction_rs x percentage_of_initial_construction_cost / 100",
-                    "major_repair_carbon_cost": "cost_of_initial_carbon_emissions_in_rs x percentage_of_initial_carbon_emission_cost / 100",
+                    "major_repair_cost": "initial_cost_of_construction x percentage_of_initial_construction_cost / 100",
+                    "major_repair_carbon_cost": "cost_of_initial_carbon_emissions_in x percentage_of_initial_carbon_emission_cost / 100",
                     "present_value_of_major_repair_costs": "major_repair_cost x present_worth_factor",
                     "present_value_of_major_repair_carbon_costs": "major_repair_carbon_cost x present_worth_factor",
                     "road_user_cost": "calculated based on disruption duration and daily road user cost",
                     "vehicular_emission_cost": "calculated based on disruption duration and daily vehicular emission cost",
                 },
                 "inputs": {
-                    "initial_cost_of_construction_rs": self.initial_construction_cost,
-                    "cost_of_initial_carbon_emissions_in_rs": self.initial_carbon_cost,
+                    "initial_cost_of_construction": self.initial_construction_cost,
+                    "cost_of_initial_carbon_emissions_in": self.initial_carbon_cost,
                     "percentage_of_initial_construction_cost_for_repair": repair_percentage,
                     "percentage_of_initial_carbon_emission_cost": repair_carbon_percentage,
                     "interval_for_repair_and_rehabitation_in_years_for_repair": repair_interval,
@@ -607,16 +607,16 @@ class StageCostCalculator:
             return {
                 "breakdown": {
                     "formulae": {
-                        "demolition_cost": "initial_cost_of_construction_rs x percentage_of_initial_construction_cost / 100",
-                        "demolition_carbon_cost": "cost_of_initial_carbon_emissions_in_rs x percentage_of_initial_carbon_emission_cost / 100",
-                        "cost_of_reconstruction_after_demolition_rs": "initial_cost_of_construction_rs",
+                        "demolition_cost": "initial_cost_of_construction x percentage_of_initial_construction_cost / 100",
+                        "demolition_carbon_cost": "cost_of_initial_carbon_emissions_in x percentage_of_initial_carbon_emission_cost / 100",
+                        "cost_of_reconstruction_after_demolition": "initial_cost_of_construction",
                         "present_value_of_demolition_costs": "demolition_cost x demolition_spwi",
                         "present_value_of_demolition_carbon_costs": "demolition_carbon_cost x demolition_spwi",
-                        "present_value_of_reconstruction_costs": "initial_cost_of_construction_rs x demolition_spwi",
+                        "present_value_of_reconstruction_costs": "initial_cost_of_construction x demolition_spwi",
                     },
                     "inputs": {
-                        "initial_cost_of_construction_rs": self.initial_construction_cost,
-                        "cost_of_initial_carbon_emissions_in_rs": self.initial_carbon_cost,
+                        "initial_cost_of_construction": self.initial_construction_cost,
+                        "cost_of_initial_carbon_emissions_in": self.initial_carbon_cost,
                         "percentage_of_initial_construction_cost": percentage_of_initial_construction_cost,
                         "percentage_of_initial_carbon_emission_cost": percentage_of_initial_carbon_emission_cost,
                     },
@@ -626,19 +626,19 @@ class StageCostCalculator:
                         "demolition_spwi": demolition_spwi,
                     },
                 },
-                "total_demolition_and_disposal_costs_rs": demolition_cost
+                "total_demolition_and_disposal_costs": demolition_cost
                 * demolition_spwi,
-                "total_demolition_and_disposal_carbon_costs_rs": demolition_carbon_cost
+                "total_demolition_and_disposal_carbon_costs": demolition_carbon_cost
                 * demolition_spwi,
-                "cost_of_reconstruction_after_demolition_rs": self.initial_construction_cost
+                "cost_of_reconstruction_after_demolition": self.initial_construction_cost
                 * demolition_spwi,
             }
 
         return {
-            "total_demolition_and_disposal_costs_rs": demolition_cost * demolition_spwi,
-            "total_demolition_and_disposal_carbon_costs_rs": demolition_carbon_cost
+            "total_demolition_and_disposal_costs": demolition_cost * demolition_spwi,
+            "total_demolition_and_disposal_carbon_costs": demolition_carbon_cost
             * demolition_spwi,
-            "cost_of_reconstruction_after_demolition_rs": self.initial_construction_cost
+            "cost_of_reconstruction_after_demolition": self.initial_construction_cost
             * demolition_spwi,
         }
 
@@ -702,43 +702,43 @@ class StageCostCalculator:
         if self.debug:
             breakdown = {
                 "formulae": {
-                    "initial_construction_cost_rs": "initial_construction_cost",
-                    "initial_material_carbon_emission_cost_rs": "initial_carbon_cost",
-                    "initial_road_user_cost_rs": "calculated based on construction duration and daily road user cost",
-                    "initial_vehicular_emission_cost_rs": "calculated based on construction duration and daily vehicular emission cost",
-                    "time_cost_of_loan_rs": "calculated based on initial construction cost, loan interest rate, and construction period",
+                    "initial_construction_cost": "initial_construction_cost",
+                    "initial_material_carbon_emission_cost": "initial_carbon_cost",
+                    "initial_road_user_cost": "calculated based on construction duration and daily road user cost",
+                    "initial_vehicular_emission_cost": "calculated based on construction duration and daily vehicular emission cost",
+                    "time_cost_of_loan": "calculated based on initial construction cost, loan interest rate, and construction period",
                 },
                 "inputs": {
-                    "initial_construction_cost_rs": self.initial_construction_cost,
-                    "initial_carbon_cost_rs": self.initial_carbon_cost,
+                    "initial_construction_cost": self.initial_construction_cost,
+                    "initial_carbon_cost": self.initial_carbon_cost,
                     "construction_period_in_years": self.construction_period_in_yrs,
                     "days_per_month": self.days_per_month,
                 },
                 "computed_values": {
-                    "initial_road_user_cost_rs": ruc["ruc_cost"],
-                    "initial_vehicular_emission_cost_rs": ruc[
+                    "initial_road_user_cost": ruc["ruc_cost"],
+                    "initial_vehicular_emission_cost": ruc[
                         "vehicular_emission_cost"
                     ],
-                    "time_cost_of_loan_rs": time_cost_loan[
-                        "total_time_cost_of_loan_rs"
+                    "time_cost_of_loan": time_cost_loan[
+                        "total_time_cost_of_loan"
                     ],
                 },
                 "road_user_cost_breakdown": ruc["debug"],
-                "total_time_cost_of_loan_rs": time_cost_loan["breakdown"],
+                "total_time_cost_of_loan": time_cost_loan["breakdown"],
             }
             dump_to_file("stage_costs_1-initial_cost_breakdown.json", breakdown)
 
         return {
             "economic": {
-                "initial_construction_cost_rs": self.initial_construction_cost,
-                "time_cost_of_loan_rs": time_cost_loan["total_time_cost_of_loan_rs"],
+                "initial_construction_cost": self.initial_construction_cost,
+                "time_cost_of_loan": time_cost_loan["total_time_cost_of_loan"],
             },
             "environmental": {
-                "initial_material_carbon_emission_cost_rs": self.initial_carbon_cost,
-                "initial_vehicular_emission_cost_rs": ruc["vehicular_emission_cost"],
+                "initial_material_carbon_emission_cost": self.initial_carbon_cost,
+                "initial_vehicular_emission_cost": ruc["vehicular_emission_cost"],
             },
             "social": {
-                "initial_road_user_cost_rs": ruc["ruc_cost"],
+                "initial_road_user_cost": ruc["ruc_cost"],
             },
         }
 
@@ -869,17 +869,17 @@ class StageCostCalculator:
                     ],
                     "road_user_and_vehicular_emission_costs_breakdown": road_user_and_vehicular_emission,
                     "reconstruction_costs_breakdown": reconstruction["breakdown"],
-                    "total_demolition_and_disposal_costs_rs": demolition_and_disposal[
-                        "total_demolition_and_disposal_costs_rs"
+                    "total_demolition_and_disposal_costs": demolition_and_disposal[
+                        "total_demolition_and_disposal_costs"
                     ],
-                    "total_demolition_and_disposal_carbon_costs_rs": demolition_and_disposal[
-                        "total_demolition_and_disposal_carbon_costs_rs"
+                    "total_demolition_and_disposal_carbon_costs": demolition_and_disposal[
+                        "total_demolition_and_disposal_carbon_costs"
                     ],
-                    "cost_of_reconstruction_after_demolition_rs": reconstruction[
-                        "total_construction_costs_rs"
+                    "cost_of_reconstruction_after_demolition": reconstruction[
+                        "total_construction_costs"
                     ],
-                    "carbon_cost_of_reconstruction_after_demolition_rs": reconstruction[
-                        "total_carbon_costs_rs"
+                    "carbon_cost_of_reconstruction_after_demolition": reconstruction[
+                        "total_carbon_costs"
                     ],
                     "ruc_demolition": road_user_and_vehicular_emission[
                         "demolition_road_user_cost"
@@ -891,8 +891,8 @@ class StageCostCalculator:
                     "reconstruction_vehicular_emission_cost": reconstruction[
                         "construction_vehicular_emission_cost"
                     ],
-                    "time_cost_of_loan_rs": time_cost["breakdown"],
-                    "total_scrap_value_rs": {
+                    "time_cost_of_loan": time_cost["breakdown"],
+                    "total_scrap_value": {
                         "formula": "total_scrap_cost x demolition_spwi",
                         "value": total_scrap_cost,
                         "note": "This value is negative as it represents a salvage value.",
@@ -902,21 +902,21 @@ class StageCostCalculator:
 
         return {
             "economic": {
-                "total_demolition_and_disposal_costs_rs": demolition_and_disposal[
-                    "total_demolition_and_disposal_costs_rs"
+                "total_demolition_and_disposal_costs": demolition_and_disposal[
+                    "total_demolition_and_disposal_costs"
                 ],
-                "cost_of_reconstruction_after_demolition_rs": reconstruction[
-                    "total_construction_costs_rs"
+                "cost_of_reconstruction_after_demolition": reconstruction[
+                    "total_construction_costs"
                 ],
-                "total_scrap_value_rs": total_scrap_cost,
-                "time_cost_of_loan_rs": time_cost["total_time_cost_of_loan_rs"],
+                "total_scrap_value": total_scrap_cost,
+                "time_cost_of_loan": time_cost["total_time_cost_of_loan"],
             },
             "environmental": {
-                "carbon_costs_demolition_and_disposal_rs": demolition_and_disposal[
-                    "total_demolition_and_disposal_carbon_costs_rs"
+                "carbon_costs_demolition_and_disposal": demolition_and_disposal[
+                    "total_demolition_and_disposal_carbon_costs"
                 ],
-                "carbon_cost_of_reconstruction_after_demolition_rs": reconstruction[
-                    "total_carbon_costs_rs"
+                "carbon_cost_of_reconstruction_after_demolition": reconstruction[
+                    "total_carbon_costs"
                 ],
                 "demolition_vehicular_emission_cost": road_user_and_vehicular_emission[
                     "demolition_vehicular_emission_cost"
@@ -969,14 +969,14 @@ class StageCostCalculator:
                     "demolition_and_disposal_breakdown": demolition_and_disposal[
                         "breakdown"
                     ],
-                    "total_demolition_and_disposal_costs_rs": demolition_and_disposal[
-                        "total_demolition_and_disposal_costs_rs"
+                    "total_demolition_and_disposal_costs": demolition_and_disposal[
+                        "total_demolition_and_disposal_costs"
                     ],
-                    "total_demolition_and_disposal_carbon_costs_rs": demolition_and_disposal[
-                        "total_demolition_and_disposal_carbon_costs_rs"
+                    "total_demolition_and_disposal_carbon_costs": demolition_and_disposal[
+                        "total_demolition_and_disposal_carbon_costs"
                     ],
-                    "cost_of_reconstruction_after_demolition_rs": demolition_and_disposal[
-                        "cost_of_reconstruction_after_demolition_rs"
+                    "cost_of_reconstruction_after_demolition": demolition_and_disposal[
+                        "cost_of_reconstruction_after_demolition"
                     ],
                     "ruc_demolition": road_user_and_vehicular_emission[
                         "demolition_road_user_cost"
@@ -984,7 +984,7 @@ class StageCostCalculator:
                     "demolition_vehicular_emission_cost": road_user_and_vehicular_emission[
                         "demolition_vehicular_emission_cost"
                     ],
-                    "total_scrap_value_rs": {
+                    "total_scrap_value": {
                         "formula": "total_scrap_cost x demolition_spwi",
                         "value": total_scrap_cost,
                     },
@@ -992,14 +992,14 @@ class StageCostCalculator:
             )
         return {
             "economic": {
-                "total_demolition_and_disposal_costs_rs": demolition_and_disposal[
-                    "total_demolition_and_disposal_costs_rs"
+                "total_demolition_and_disposal_costs": demolition_and_disposal[
+                    "total_demolition_and_disposal_costs"
                 ],
-                "total_scrap_value_rs": total_scrap_cost,
+                "total_scrap_value": total_scrap_cost,
             },
             "environmental": {
-                "carbon_costs_demolition_and_disposal_rs": demolition_and_disposal[
-                    "total_demolition_and_disposal_carbon_costs_rs"
+                "carbon_costs_demolition_and_disposal": demolition_and_disposal[
+                    "total_demolition_and_disposal_carbon_costs"
                 ],
                 "demolition_vehicular_emission_cost": road_user_and_vehicular_emission[
                     "demolition_vehicular_emission_cost"

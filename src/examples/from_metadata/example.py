@@ -29,10 +29,10 @@ from examples.from_metadata.wpi import wpi_object
 # ============================================================
 
 life_cycle_construction_cost_breakdown = {
-    "initial_construction_cost_rs": 12843979.44,
-    "material_carbon_emissions_cost_rs": 2065434.91,
-    "superstructure_construction_cost_rs": 9356038.92,
-    "total_scrap_value_rs": 2164095.02,
+    "initial_construction_cost": 12843979.44,
+    "material_carbon_emissions_cost": 2065434.91,
+    "superstructure_construction_cost": 9356038.92,
+    "total_scrap_value": 2164095.02,
 }
 
 

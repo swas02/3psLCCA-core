@@ -64,8 +64,8 @@
 # }
 
 # input_from_program = {
-#     "initial_cost_of_construction_rs": 12843979.44,
-#     "cost_of_initial_carbon_emissions_in_rs": 2065434.91,
+#     "initial_cost_of_construction": 12843979.44,
+#     "cost_of_initial_carbon_emissions_in": 2065434.91,
 #     "cost_of_super_structure": 9356038.92,
 #     "road_user_cost": {
 #         "accident_cost": {
