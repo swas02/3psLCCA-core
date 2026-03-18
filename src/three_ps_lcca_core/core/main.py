@@ -60,13 +60,27 @@ def run_full_lcc_analysis(input_data, construction_costs, wpi=None, debug=False)
 
     # --- 3. Normalise wpi to dict ---
     if isinstance(wpi, dict):
-        WPIMetaData.from_dict(wpi)  # validate structure early; dict form is retained downstream
+        WPIMetaData.from_dict(
+            wpi
+        )  # validate structure early; dict form is retained downstream
     elif isinstance(wpi, WPIMetaData):
         wpi = wpi.to_dict()
     elif wpi is not None:
         raise TypeError("wpi must be a dict or WPIMetaData instance.")
     # wpi=None is valid: when is_global=True, eval_wpi=False so wpi is never inspected;
     # when is_global=False, eval_wpi=True and the validator will raise if wpi is required but absent.
+
+    # --- 3b. Dump all normalised inputs for debugging ---
+    if debug:
+        dump_to_file(
+            "A0_Core_Inputs.json",
+            {
+                "is_global": is_global,
+                "input_data": input_data,
+                "construction_costs": construction_costs,
+                "wpi": wpi,
+            },
+        )
 
     # --- 4. Validate Input ---
     # eval_wpi=False when is_global is True — WPI is not needed and may not be provided

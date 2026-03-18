@@ -1,14 +1,14 @@
 Input = {
     "general_parameters": {
-        "service_life_years": 75,
-        "analysis_period_years": 150,
+        "service_life_years": 150,
+        "analysis_period_years": 100,
         "discount_rate_percent": 6.7,
         "inflation_rate_percent": 5.15,
         "interest_rate_percent": 7.75,
         "investment_ratio": 0.5,
         "social_cost_of_carbon_per_mtco2e": 86.40,
         "currency_conversion": 88.73,
-        "construction_period_months": 5.2,
+        "construction_period_months": 1/30,
         "working_days_per_month": 26,
         "days_per_month": 30,
         "use_global_road_user_calculations": False,
@@ -16,45 +16,45 @@ Input = {
     "traffic_and_road_data": {
         "vehicle_data": {
             "small_cars": {
-                "vehicles_per_day": 1405,
+                "vehicles_per_day": 7271,
                 "carbon_emissions_kgCO2e_per_km": 0.103,
                 "accident_percentage": 12.18,
             },
             "big_cars": {
-                "vehicles_per_day": 5502,
+                "vehicles_per_day": 7269,
                 "carbon_emissions_kgCO2e_per_km": 0.269,
                 "accident_percentage": 11.75,
             },
             "two_wheelers": {
-                "vehicles_per_day": 10359,
+                "vehicles_per_day": 3409,
                 "carbon_emissions_kgCO2e_per_km": 0.0351,
                 "accident_percentage": 74.61,
             },
             "o_buses": {
-                "vehicles_per_day": 387,
+                "vehicles_per_day": 2,
                 "carbon_emissions_kgCO2e_per_km": 0.45483,
                 "accident_percentage": 0.88,
             },
             "d_buses": {
-                "vehicles_per_day": 394,
+                "vehicles_per_day": 480,
                 "carbon_emissions_kgCO2e_per_km": 0.60644,
                 "accident_percentage": 0,
             },
             "lcv": {
-                "vehicles_per_day": 3068,
+                "vehicles_per_day": 564,
                 "carbon_emissions_kgCO2e_per_km": 0.307,
                 "accident_percentage": 0,
             },
-            "hcv": {
-                "vehicles_per_day": 1352,
+            "mcv": {
+                "vehicles_per_day": 0,
                 "carbon_emissions_kgCO2e_per_km": 0.7375,
-                "accident_percentage": 0.59,
+                "accident_percentage": 0,
                 "pwr": 8,
             },
-            "mcv": {
-                "vehicles_per_day": 119,
+            "hcv": {
+                "vehicles_per_day": 40,
                 "carbon_emissions_kgCO2e_per_km": 0.5928,
-                "accident_percentage": 0,
+                "accident_percentage": 0.59,
                 "pwr": 7.22,
             },
         },
@@ -66,14 +66,14 @@ Input = {
         "additional_inputs": {
             "alternate_road_carriageway": "2L",
             "carriage_width_in_m": 8,
-            "road_roughness_mm_per_km": 3000,
-            "road_rise_m_per_km": 2,
-            "road_fall_m_per_km": 2,
-            "additional_reroute_distance_km": 0.2,
+            "road_roughness_mm_per_km": 2000,
+            "road_rise_m_per_km": 0,
+            "road_fall_m_per_km": 0,
+            "additional_reroute_distance_km": 0.175,
             "additional_travel_time_min": 0.525,
             "crash_rate_accidents_per_million_km": 3385.23,
             "work_zone_multiplier": 1.0,
-            "peak_hour_traffic_percent_per_hour": [0.10, 0.10, 0.10],
+            "peak_hour_traffic_percent_per_hour": [0.10, 0.10],
             "hourly_capacity": 1900,
             "force_free_flow_off_peak": True,  # v/c = 1
         },
@@ -99,7 +99,7 @@ Input = {
                 "repair": {
                     "percentage_of_initial_construction_cost": 10,
                     "percentage_of_initial_carbon_emission_cost": 0.55,
-                    "interval_for_repair_and_rehabitation_in_years": 20,
+                    "interval_for_repair_and_rehabitation_in_years": 60,
                     "repairs_duration_months": 3,
                 },
             },

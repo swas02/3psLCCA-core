@@ -4,6 +4,7 @@ from .value_of_time import main as value_of_time
 from .accident_cost import core as accident_cost
 from .total_carbon_emission import core as total_carbon_emission
 from .calculate_total_ruc_per_day import calculate_total_ruc_per_day
+from ..utils.dump_to_file import dump_to_file
 
 
 def calculate_road_user_costs(traffic_input, wpi, debug=False):
@@ -13,6 +14,12 @@ def calculate_road_user_costs(traffic_input, wpi, debug=False):
     """
     # Get additional reroute distance in km
     additional_rerouting_distance_km = traffic_input["additional_inputs"]["additional_reroute_distance_km"]
+
+    if debug:
+        dump_to_file("ruc-A0_traffic_inputs.json", {
+            "traffic_input": traffic_input,
+            "wpi": wpi,
+        })
 
     # Short-circuit: ADT = 0 means user opts out of all RUC → return zeros
     total_adt = sum(v.get("vehicles_per_day", 0) for v in traffic_input["vehicle_data"].values())

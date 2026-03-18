@@ -90,8 +90,13 @@ class VOCPostProcessor:
                 f"CRITICAL: Base cost keys (IT/ET/VALUE) missing for {path}"
             )
 
+        if c.VALUE in cost_base:
+            debugger = {"base": it_base, "multiplier": mult, "path": path}
+        else:
+            debugger = {"base_it": it_base, "base_et": et_base, "multiplier": mult, "path": path}
+
         res = {
-            "WPI_Debugger": {"base_it": it_base, "multiplier": mult, "path": path},
+            "WPI_Debugger": debugger,
             c.UNIT: "Rs/km",
             c.iHTC: True,
         }
@@ -167,11 +172,8 @@ class VOCPostProcessor:
                 o_mult = self._get_strict_multiplier("fuel_cost", vt, sub_key=oil)
                 fac = 1000 if oil == c.ENGINE_OIL else 10000
                 o_base = {
-                    c.VALUE: (
-                        dist_s[oil][c.VALUE]
-                        * tableC1.petroleum_products_costs[oil][c.IT]
-                    )
-                    / fac
+                    c.IT: (dist_s[oil][c.VALUE] * tableC1.petroleum_products_costs[oil][c.IT]) / fac,
+                    c.ET: (dist_s[oil][c.VALUE] * tableC1.petroleum_products_costs[oil][c.ET]) / fac,
                 }
                 dc[oil] = self._apply_adjustment(
                     o_base, o_mult, f"WPI -> fuel_cost -> {oil}"
@@ -251,7 +253,7 @@ def calculate_total_cost(data: Dict[str, Any]) -> Dict[str, Any]:
         for vt, components in data[cost_type].items():
             total_cost[cost_type][vt] = {c.IT: 0.0, c.ET: 0.0}
             for comp_name, comp_values in components.items():
-                if comp_name == "WPI_Debugger" or not isinstance(comp_values, dict):
+                if comp_name in ("WPI_Debugger", "total_time_cost") or not isinstance(comp_values, dict):
                     continue
                 total_cost[cost_type][vt][c.IT] += comp_values.get(
                     c.IT, comp_values.get(c.VALUE, 0.0)

@@ -8,7 +8,7 @@ vehicle_costs = {
     c.BUSES: {c.ET: 1647150, c.IT: 2948400},
     c.LCV: {c.ET: 449721, c.IT: 805000},
     c.HCV: {c.ET: 940531, c.IT: 1683550},
-    c.MCV: {c.ET: 1415350, c.IT: 1415350},
+    c.MCV: {c.ET: 1415350, c.IT: 2533475},
 }
 
 petroleum_products_costs = {

@@ -86,7 +86,7 @@ class StageCostCalculator:
 
     def _road_user_cost_and_carbon_emissions_cost(
         self,
-        duration_days: Optional[int] = None,
+        duration_days: int = None,
         spwf: Optional[float] = None,
     ) -> Dict[str, Any]:
         """
@@ -108,14 +108,14 @@ class StageCostCalculator:
 
         # Carbon cost
         try:
-            scc = self.input_params["general"]["social_cost_of_carbon_per_mtco2e"]
+            scc = self.input_params["general"]["social_cost_of_carbon_per_mtco2e"]/1000
             conv_rate = self.input_params["general"]["currency_conversion"]
         except KeyError as exc:
             raise ValueError(f"Missing required input parameter: {exc}") from exc
 
         total_emission_cost = (
-            emission_kg_per_km * duration_days * scc * conv_rate / 1000
-        )  # kg -> mt
+            emission_kg_per_km * duration_days * scc * conv_rate
+        )
 
         # Apply Present Worth Factor (SPWF) if given
         if spwf is not None:
